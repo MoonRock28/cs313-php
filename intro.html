@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Braden Steiner - Introduction</title>
+		<link rel="stylesheet" type="text/css" href="baseStyle.css">
+	</head>
+	<body>
+		<div id="header">
+			<h2>Welcome to Braden Steiner's Website</h2>
+			<h4><a href="assignments.html">Assignments</a></h4>	
+		</div>
+		
+		<div id="content">
+			<h2>A little about me:</h2>
+			<ul>
+				<li>I am from Kaysville Utah.</li>
+				<li>I plan to graduation from BYU-Idaho in 2017.</li>
+				<li>I volunteer for Student Support on the Get Connected council.</li>
+				<li>I love animated movies like Zootopia and How to Train Your Dragon.</li>
+			</ul>
+			<img src="toothlessAndI.jpg" alt="Toothless and I" height="350" id="plushy" onclick="myFunction()"/>
+			<script>
+				var number = 1;
+				
+				function myFunction() {
+					number += 1;
+					if (number % 2 == 0)
+						document.getElementById("plushy").height = 450;
+					else 
+						document.getElementById("plushy").height = 350;
+				}
+			</script>
+		</div>
+			
+		<div id="footer">
+			
+		</div>
+	</body>
+</html>
