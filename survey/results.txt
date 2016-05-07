@@ -1,0 +1,8 @@
+Gamecube Controller. Smash,Special,Attack,. Shield. Grab
+Wii U Game Pad.Attack,. Jump. Grab
+Wii U Pro Controller.Attack,. Grab. Jump
+Wii U Pro Controller.Attack,. Grab. Shield
+Wii U Game Pad.Attack,. Shield. Grab
+Gamecube Controller.Attack,. Grab. Shield
+Gamecube Controller.Attack,. Shield. Shield
+Gamecube Controller.Special,. Grab. Jump
