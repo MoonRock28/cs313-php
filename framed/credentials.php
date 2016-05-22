@@ -1,8 +1,8 @@
 <?php
 try{
-	$user = 'steve';
-	$password = 'nerdface';
-	$db = new PDO("mysql:host=localhost;dbname=framed", $user, $password);
+	$user = 'SomePrettyPerson';
+	$password = 'VYDwJyyNH2haum3U';
+	$db = new PDO("mysql:host=127.11.155.2;dbname=framed", $user, $password);
 }
 catch (PDOException $ex){
 	echo 'ERROR!: ' . $ex->getMessage();
