@@ -6,10 +6,16 @@ require 'credentials.php';
 
 if(isset($_POST['game'])){
 	$gameName = $_POST['game'];
+	$_SESSION['gameName'] = $gameName;
 }
 else {
-	echo "<h1>No Game Selected!</h1>";
+	$gameName = $_SESSION['gameName'];
 }
+
+//set my own variables
+$startTime;
+$locationRules;
+$winnerId = 0;
 
 // Get the users last name	
 $stmt = $db->prepare('SELECT * FROM user WHERE firstName=:name');
@@ -38,6 +44,7 @@ $stmt->execute();
 $names = $stmt->fetchALL(PDO::FETCH_ASSOC);
 foreach ($names as $name) {
 	$gameId = $name['id'];
+	$_SESSION['gameId'] = $gameId;
 }
 foreach ($games as $game){
 	if ($game['gameId'] == $gameId){
@@ -58,8 +65,9 @@ foreach($targets as $target) {
 	//echo $targetFirstName;
 	//echo $targetLastName;
 }
+$_SESSION['targetFirstName'] = $targetFirstName;
 
-//Get the Games location information.
+//Get the Games location information and winnerId.
 $stmt = $db->prepare('SELECT * FROM game WHERE id=:name');
 $stmt->bindValue(':name', $gameId, PDO::PARAM_STR);
 $stmt->execute();
@@ -89,6 +97,25 @@ $stmt = $db->prepare('SELECT img FROM frame WHERE gameId=:id');
 $stmt->bindValue('id', $gameId, PDO::PARAM_STR);
 $stmt->execute();
 $locations = $stmt->fetchALL(PDO::FETCH_ASSOC);
+
+//get the exterminated users from the game.
+$deadNames = array();
+$stmt = $db->prepare('SELECT userId FROM userGame 
+						WHERE gameId = :gameId AND isAlive = FALSE');
+$stmt->bindValue(':gameId', $gameId , PDO::PARAM_INT);
+$stmt->execute();
+$exterminated = $stmt->fetchALL(PDO::FETCH_ASSOC);
+foreach($exterminated as $dead) {
+	$stmt = $db->prepare('SELECT firstName, lastName FROM user 
+							WHERE id = :id');
+	$stmt->bindValue(':id', $dead['userId'], PDO::PARAM_INT);
+	$stmt->execute();
+	$names = $stmt->fetchALL(PDO::FETCH_ASSOC);
+	foreach($names as $name) {
+		$fullName = $name['firstName'] . " " . $name['lastName'];
+		array_push($deadNames, $fullName);
+	}
+}
 ?>
 
 <!DOCTYPE html>
@@ -104,6 +131,21 @@ $locations = $stmt->fetchALL(PDO::FETCH_ASSOC);
 		</div>
 		<div class="content">
 			<div id="gameInfo">
+				<?php
+				if ($winnerId != NULL) {
+					$stmt = $db->prepare('SELECT firstName, lastName FROM user
+											WHERE id = :id');
+					$stmt->bindValue(':id', $winnerId, PDO::PARAM_INT);
+					$stmt->execute();
+					$winnerNames = $stmt->fetchAll(PDO::FETCH_ASSOC);
+					foreach($winnerNames as $winner) {
+						$winnerFirst = $winner['firstName'];
+						$winnerLast = $winner['lastName'];
+					}
+					echo "<h1>The Winner is: " . $winnerFirst . " " . $winnerLast . "</h1>";
+					echo "<h2>The Game is Over</h2>";
+				}
+				?>
 				<h2>Location: 
 				<?php echo $location; ?>
 				</h2>
@@ -138,19 +180,24 @@ $locations = $stmt->fetchALL(PDO::FETCH_ASSOC);
 			<div id="frames">
 				<h3>Players Terminated: 
 				<?php 
-					if($locations == NULL){
-						echo "N/A";
+					echo "<ul><span style=\"color: #cc0000;\">";
+					foreach($deadNames as $name) {
+						echo "<li>" . $name . "</li>";
 					}
+					echo "</span></ul>";
+					/*if($locations == NULL){
+						echo "N/A";
+					}*/
 				?>
 				</h3>
 			<?php foreach($locations as $url): ?>
 				<div class="picture">			
-					<img src="<?php echo $url; ?>" height="400"/>
+					<img src="<? echo $url; ?>" height="400"/>
 				</div>
 			<?php endforeach; ?>
 			</div>
 			<div id="modify">
-				<h3><a href="addFrame.php">Record your recent Frame</a></h3>
+				<h3><a href="addFrame.php">Upload your recent Frame</a></h3>
 			</div>
 		</div>
 	</div>
